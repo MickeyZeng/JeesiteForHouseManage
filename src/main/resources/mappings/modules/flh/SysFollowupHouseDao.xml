@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thinkgem.jeesite.modules.flh.dao.SysFollowupHouseDao">
+    
+	<sql id="sysFollowupHouseColumns">
+		a.id AS "id",
+		a.content AS "content",
+		a.userid AS "userid",
+		a.houseid AS "houseid",
+		a.time AS "time",
+		a.method AS "method",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.remarks AS "remarks",
+		a.del_flag AS "delFlag"
+	</sql>
+	
+	<sql id="sysFollowupHouseJoins">
+	</sql>
+    
+	<select id="get" resultType="SysFollowupHouse">
+		SELECT 
+			<include refid="sysFollowupHouseColumns"/>
+		FROM sys_followup_house a
+		<include refid="sysFollowupHouseJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="SysFollowupHouse">
+		SELECT 
+			<include refid="sysFollowupHouseColumns"/>
+		FROM sys_followup_house a
+		<include refid="sysFollowupHouseJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="userid != null and userid != ''">
+				AND a.userid LIKE 
+					<if test="dbName == 'oracle'">'%'||#{userid}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{userid}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{userid},'%')</if>
+			</if>
+			<if test="houseid != null and houseid != ''">
+				AND a.houseid LIKE 
+					<if test="dbName == 'oracle'">'%'||#{houseid}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{houseid}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{houseid},'%')</if>
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="SysFollowupHouse">
+		SELECT 
+			<include refid="sysFollowupHouseColumns"/>
+		FROM sys_followup_house a
+		<include refid="sysFollowupHouseJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO sys_followup_house(
+			id,
+			content,
+			userid,
+			houseid,
+			time,
+			method,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			remarks,
+			del_flag
+		) VALUES (
+			#{id},
+			#{content},
+			#{userid},
+			#{houseid},
+			#{time},
+			#{method},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{remarks},
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE sys_followup_house SET 	
+			content = #{content},
+			userid = #{userid},
+			houseid = #{houseid},
+			time = #{time},
+			method = #{method},
+			update_by = #{updateBy.id},
+			update_date = #{updateDate},
+			remarks = #{remarks}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE sys_followup_house SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thinkgem.jeesite.modules.hos.dao.SysHousemsgDao">
+    
+	<sql id="sysHousemsgColumns">
+		a.id AS "id",
+		a.application AS "application",
+		a.transaction AS "transaction",
+		a.address AS "address",
+		a.area AS "area",
+		a.type AS "type",
+		a.house_type AS "houseType",
+		a.decoration AS "decoration",
+		a.orientation AS "orientation",
+		a.status AS "status",
+		a.sell_price AS "sellPrice",
+		a.attribute AS "attribute",
+		a.sell_lowprice AS "sellLowprice",
+		a.purchasing_date AS "purchasingDate",
+		a.rent_price AS "rentPrice",
+		a.rent_lowprice AS "rentLowprice",
+		a.precatory_date AS "precatoryDate",
+		a.loan AS "loan",
+		a.precatory_method AS "precatoryMethod",
+		a.resource AS "resource",
+		a.precatory_number AS "precatoryNumber",
+		a.lunch_time AS "lunchTime",
+		a.record_number AS "recordNumber",
+		a.remark AS "remark",
+		a.status_quo AS "statusQuo",
+		a.furniture AS "furniture",
+		a.originaly_purchasing_price AS "originalyPurchasingPrice",
+		a.management_cost AS "managementCost",
+		a.household_applicances AS "householdApplicances",
+		a.parking_plot AS "parkingPlot",
+		a.payment_method AS "paymentMethod",
+		a.production_license_number AS "productionLicenseNumber",
+		a.year_of_property_right AS "yearOfPropertyRight",
+		a.certificate_of_house_property AS "certificateOfHouseProperty",
+		a.id_card AS "idCard",
+		a.precatory_book AS "precatoryBook",
+		a.client_id AS "clientId",
+		a.user_id AS "user.id",
+		a.organization_id AS "organizationId",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.remarks AS "remarks",
+		a.del_flag AS "delFlag",
+		u38.name AS "user.name"
+	</sql>
+	
+	<sql id="sysHousemsgJoins">
+		LEFT JOIN sys_user u38 ON u38.id = a.user_id
+	</sql>
+    
+	<select id="get" resultType="SysHousemsg">
+		SELECT 
+			<include refid="sysHousemsgColumns"/>
+		FROM sys_housemsg a
+		<include refid="sysHousemsgJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="SysHousemsg">
+		SELECT 
+			<include refid="sysHousemsgColumns"/>
+		FROM sys_housemsg a
+		<include refid="sysHousemsgJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="application != null and application != ''">
+				AND a.application LIKE 
+					<if test="dbName == 'oracle'">'%'||#{application}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{application}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{application},'%')</if>
+			</if>
+			<if test="address != null and address != ''">
+				AND a.address LIKE 
+					<if test="dbName == 'oracle'">'%'||#{address}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{address}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{address},'%')</if>
+			</if>
+			<if test="area != null and area != ''">
+				AND a.area LIKE 
+					<if test="dbName == 'oracle'">'%'||#{area}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{area}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{area},'%')</if>
+			</if>
+			<if test="user != null and user.id != null and user.id != ''">
+				AND a.user_id = #{user.id}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="SysHousemsg">
+		SELECT 
+			<include refid="sysHousemsgColumns"/>
+		FROM sys_housemsg a
+		<include refid="sysHousemsgJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO sys_housemsg(
+			id,
+			application,
+			transaction,
+			address,
+			area,
+			type,
+			house_type,
+			decoration,
+			orientation,
+			status,
+			sell_price,
+			attribute,
+			sell_lowprice,
+			purchasing_date,
+			rent_price,
+			rent_lowprice,
+			precatory_date,
+			loan,
+			precatory_method,
+			resource,
+			precatory_number,
+			lunch_time,
+			record_number,
+			remark,
+			status_quo,
+			furniture,
+			originaly_purchasing_price,
+			management_cost,
+			household_applicances,
+			parking_plot,
+			payment_method,
+			production_license_number,
+			year_of_property_right,
+			certificate_of_house_property,
+			id_card,
+			precatory_book,
+			client_id,
+			user_id,
+			organization_id,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			remarks,
+			del_flag
+		) VALUES (
+			#{id},
+			#{application},
+			#{transaction},
+			#{address},
+			#{area},
+			#{type},
+			#{houseType},
+			#{decoration},
+			#{orientation},
+			#{status},
+			#{sellPrice},
+			#{attribute},
+			#{sellLowprice},
+			#{purchasingDate},
+			#{rentPrice},
+			#{rentLowprice},
+			#{precatoryDate},
+			#{loan},
+			#{precatoryMethod},
+			#{resource},
+			#{precatoryNumber},
+			#{lunchTime},
+			#{recordNumber},
+			#{remark},
+			#{statusQuo},
+			#{furniture},
+			#{originalyPurchasingPrice},
+			#{managementCost},
+			#{householdApplicances},
+			#{parkingPlot},
+			#{paymentMethod},
+			#{productionLicenseNumber},
+			#{yearOfPropertyRight},
+			#{certificateOfHouseProperty},
+			#{idCard},
+			#{precatoryBook},
+			#{clientId},
+			#{user.id},
+			#{organizationId},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{remarks},
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE sys_housemsg SET 	
+			application = #{application},
+			transaction = #{transaction},
+			address = #{address},
+			area = #{area},
+			type = #{type},
+			house_type = #{houseType},
+			decoration = #{decoration},
+			orientation = #{orientation},
+			status = #{status},
+			sell_price = #{sellPrice},
+			attribute = #{attribute},
+			sell_lowprice = #{sellLowprice},
+			purchasing_date = #{purchasingDate},
+			rent_price = #{rentPrice},
+			rent_lowprice = #{rentLowprice},
+			precatory_date = #{precatoryDate},
+			loan = #{loan},
+			precatory_method = #{precatoryMethod},
+			resource = #{resource},
+			precatory_number = #{precatoryNumber},
+			lunch_time = #{lunchTime},
+			record_number = #{recordNumber},
+			remark = #{remark},
+			status_quo = #{statusQuo},
+			furniture = #{furniture},
+			originaly_purchasing_price = #{originalyPurchasingPrice},
+			management_cost = #{managementCost},
+			household_applicances = #{householdApplicances},
+			parking_plot = #{parkingPlot},
+			payment_method = #{paymentMethod},
+			production_license_number = #{productionLicenseNumber},
+			year_of_property_right = #{yearOfPropertyRight},
+			certificate_of_house_property = #{certificateOfHouseProperty},
+			id_card = #{idCard},
+			precatory_book = #{precatoryBook},
+			client_id = #{clientId},
+			user_id = #{user.id},
+			organization_id = #{organizationId},
+			update_by = #{updateBy.id},
+			update_date = #{updateDate},
+			remarks = #{remarks}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE sys_housemsg SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

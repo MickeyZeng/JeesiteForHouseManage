@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thinkgem.jeesite.modules.dut.dao.SysEnterpriseDutiesDao">
+    
+	<sql id="sysEnterpriseDutiesColumns">
+		a.id AS "id",
+		a.enterprise_duties_id AS "enterpriseDutiesId",
+		a.duties_name AS "dutiesName",
+		a.basic_salary AS "basicSalary",
+		a.job_attributes AS "jobAttributes",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.remarks AS "remarks",
+		a.del_flag AS "delFlag"
+	</sql>
+	
+	<sql id="sysEnterpriseDutiesJoins">
+	</sql>
+    
+	<select id="get" resultType="SysEnterpriseDuties">
+		SELECT 
+			<include refid="sysEnterpriseDutiesColumns"/>
+		FROM sys_enterprise_duties a
+		<include refid="sysEnterpriseDutiesJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="SysEnterpriseDuties">
+		SELECT 
+			<include refid="sysEnterpriseDutiesColumns"/>
+		FROM sys_enterprise_duties a
+		<include refid="sysEnterpriseDutiesJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="enterpriseDutiesId != null and enterpriseDutiesId != ''">
+				AND a.enterprise_duties_id LIKE 
+					<if test="dbName == 'oracle'">'%'||#{enterpriseDutiesId}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{enterpriseDutiesId}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{enterpriseDutiesId},'%')</if>
+			</if>
+			<if test="dutiesName != null and dutiesName != ''">
+				AND a.duties_name LIKE 
+					<if test="dbName == 'oracle'">'%'||#{dutiesName}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{dutiesName}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{dutiesName},'%')</if>
+			</if>
+			<if test="beginBasicSalary != null and endBasicSalary != null and beginBasicSalary != '' and endBasicSalary != ''">
+				AND a.basic_salary BETWEEN #{beginBasicSalary} AND #{endBasicSalary}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="SysEnterpriseDuties">
+		SELECT 
+			<include refid="sysEnterpriseDutiesColumns"/>
+		FROM sys_enterprise_duties a
+		<include refid="sysEnterpriseDutiesJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO sys_enterprise_duties(
+			id,
+			enterprise_duties_id,
+			duties_name,
+			basic_salary,
+			job_attributes,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			remarks,
+			del_flag
+		) VALUES (
+			#{id},
+			#{enterpriseDutiesId},
+			#{dutiesName},
+			#{basicSalary},
+			#{jobAttributes},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{remarks},
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE sys_enterprise_duties SET 	
+			enterprise_duties_id = #{enterpriseDutiesId},
+			duties_name = #{dutiesName},
+			basic_salary = #{basicSalary},
+			job_attributes = #{jobAttributes},
+			update_by = #{updateBy.id},
+			update_date = #{updateDate},
+			remarks = #{remarks}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE sys_enterprise_duties SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

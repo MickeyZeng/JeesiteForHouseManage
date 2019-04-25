@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thinkgem.jeesite.modules.cus.dao.SysClientDao">
+    
+	<sql id="sysClientColumns">
+		a.id AS "id",
+		a.transaction AS "transaction",
+		a.application AS "application",
+		a.willing_address AS "willingAddress",
+		a.status AS "status",
+		a.area AS "area",
+		a.attribute AS "attribute",
+		a.purchasing_price AS "purchasingPrice",
+		a.precatory_date AS "precatoryDate",
+		a.rent_price AS "rentPrice",
+		a.precatory_method AS "precatoryMethod",
+		a.rank AS "rank",
+		a.source AS "source",
+		a.type AS "type",
+		a.deadline AS "deadline",
+		a.intention AS "intention",
+		a.maturity AS "maturity",
+		a.remark AS "remark",
+		a.housetype AS "housetype",
+		a.decoration AS "decoration",
+		a.gener AS "gener",
+		a.development AS "development",
+		a.orientation AS "orientation",
+		a.floor AS "floor",
+		a.payment AS "payment",
+		a.now_address AS "nowAddress",
+		a.payment_commission AS "paymentCommission",
+		a.client_age AS "clientAge",
+		a.address AS "address",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.remarks AS "remarks",
+		a.del_flag AS "delFlag"
+	</sql>
+	
+	<sql id="sysClientJoins">
+	</sql>
+    
+	<select id="get" resultType="SysClient">
+		SELECT 
+			<include refid="sysClientColumns"/>
+		FROM sys_client a
+		<include refid="sysClientJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="SysClient">
+		SELECT 
+			<include refid="sysClientColumns"/>
+		FROM sys_client a
+		<include refid="sysClientJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="id != null and id != ''">
+				AND a.id = #{id}
+			</if>
+			<if test="status != null and status != ''">
+				AND a.status = #{status}
+			</if>
+			<if test="area != null and area != ''">
+				AND a.area LIKE 
+					<if test="dbName == 'oracle'">'%'||#{area}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{area}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{area},'%')</if>
+			</if>
+			<if test="purchasingPrice != null and purchasingPrice != ''">
+				AND a.purchasing_price LIKE 
+					<if test="dbName == 'oracle'">'%'||#{purchasingPrice}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{purchasingPrice}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{purchasingPrice},'%')</if>
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="SysClient">
+		SELECT 
+			<include refid="sysClientColumns"/>
+		FROM sys_client a
+		<include refid="sysClientJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO sys_client(
+			id,
+			transaction,
+			application,
+			willing_address,
+			status,
+			area,
+			attribute,
+			purchasing_price,
+			precatory_date,
+			rent_price,
+			precatory_method,
+			rank,
+			source,
+			type,
+			deadline,
+			intention,
+			maturity,
+			remark,
+			housetype,
+			decoration,
+			gener,
+			development,
+			orientation,
+			floor,
+			payment,
+			now_address,
+			payment_commission,
+			client_age,
+			address,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			remarks,
+			del_flag
+		) VALUES (
+			#{id},
+			#{transaction},
+			#{application},
+			#{willingAddress},
+			#{status},
+			#{area},
+			#{attribute},
+			#{purchasingPrice},
+			#{precatoryDate},
+			#{rentPrice},
+			#{precatoryMethod},
+			#{rank},
+			#{source},
+			#{type},
+			#{deadline},
+			#{intention},
+			#{maturity},
+			#{remark},
+			#{housetype},
+			#{decoration},
+			#{gener},
+			#{development},
+			#{orientation},
+			#{floor},
+			#{payment},
+			#{nowAddress},
+			#{paymentCommission},
+			#{clientAge},
+			#{address},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{remarks},
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE sys_client SET 	
+			transaction = #{transaction},
+			application = #{application},
+			willing_address = #{willingAddress},
+			status = #{status},
+			area = #{area},
+			attribute = #{attribute},
+			purchasing_price = #{purchasingPrice},
+			precatory_date = #{precatoryDate},
+			rent_price = #{rentPrice},
+			precatory_method = #{precatoryMethod},
+			rank = #{rank},
+			source = #{source},
+			type = #{type},
+			deadline = #{deadline},
+			intention = #{intention},
+			maturity = #{maturity},
+			remark = #{remark},
+			housetype = #{housetype},
+			decoration = #{decoration},
+			gener = #{gener},
+			development = #{development},
+			orientation = #{orientation},
+			floor = #{floor},
+			payment = #{payment},
+			now_address = #{nowAddress},
+			payment_commission = #{paymentCommission},
+			client_age = #{clientAge},
+			address = #{address},
+			update_by = #{updateBy.id},
+			update_date = #{updateDate},
+			remarks = #{remarks}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE sys_client SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

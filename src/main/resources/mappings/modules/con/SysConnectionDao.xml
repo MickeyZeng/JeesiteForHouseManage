@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thinkgem.jeesite.modules.con.dao.SysConnectionDao">
+    
+	<sql id="sysConnectionColumns">
+		a.id AS "id",
+		a.connection AS "connection",
+		a.style AS "style",
+		a.binding AS "binding",
+		a.connection_user AS "connectionUser",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.remarks AS "remarks",
+		a.del_flag AS "delFlag"
+	</sql>
+	
+	<sql id="sysConnectionJoins">
+	</sql>
+    
+	<select id="get" resultType="SysConnection">
+		SELECT 
+			<include refid="sysConnectionColumns"/>
+		FROM sys_connection a
+		<include refid="sysConnectionJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="SysConnection">
+		SELECT 
+			<include refid="sysConnectionColumns"/>
+		FROM sys_connection a
+		<include refid="sysConnectionJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="connection != null and connection != ''">
+				AND a.connection = #{connection}
+			</if>
+			<if test="connectionUser != null and connectionUser != ''">
+				AND a.connection_user LIKE 
+					<if test="dbName == 'oracle'">'%'||#{connectionUser}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{connectionUser}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{connectionUser},'%')</if>
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="SysConnection">
+		SELECT 
+			<include refid="sysConnectionColumns"/>
+		FROM sys_connection a
+		<include refid="sysConnectionJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO sys_connection(
+			id,
+			connection,
+			style,
+			binding,
+			connection_user,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			remarks,
+			del_flag
+		) VALUES (
+			#{id},
+			#{connection},
+			#{style},
+			#{binding},
+			#{connectionUser},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{remarks},
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE sys_connection SET 	
+			connection = #{connection},
+			style = #{style},
+			binding = #{binding},
+			connection_user = #{connectionUser},
+			update_by = #{updateBy.id},
+			update_date = #{updateDate},
+			remarks = #{remarks}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE sys_connection SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

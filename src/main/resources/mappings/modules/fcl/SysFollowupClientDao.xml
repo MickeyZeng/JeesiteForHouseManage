@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thinkgem.jeesite.modules.fcl.dao.SysFollowupClientDao">
+    
+	<sql id="sysFollowupClientColumns">
+		a.id AS "id",
+		a.contents AS "contents",
+		a.userid AS "userid",
+		a.time AS "time",
+		a.clientid AS "clientid",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.remarks AS "remarks",
+		a.del_flag AS "delFlag"
+	</sql>
+	
+	<sql id="sysFollowupClientJoins">
+	</sql>
+    
+	<select id="get" resultType="SysFollowupClient">
+		SELECT 
+			<include refid="sysFollowupClientColumns"/>
+		FROM sys_followup_client a
+		<include refid="sysFollowupClientJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="SysFollowupClient">
+		SELECT 
+			<include refid="sysFollowupClientColumns"/>
+		FROM sys_followup_client a
+		<include refid="sysFollowupClientJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="userid != null and userid != ''">
+				AND a.userid LIKE 
+					<if test="dbName == 'oracle'">'%'||#{userid}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{userid}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{userid},'%')</if>
+			</if>
+			<if test="clientid != null and clientid != ''">
+				AND a.clientid LIKE 
+					<if test="dbName == 'oracle'">'%'||#{clientid}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{clientid}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{clientid},'%')</if>
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="SysFollowupClient">
+		SELECT 
+			<include refid="sysFollowupClientColumns"/>
+		FROM sys_followup_client a
+		<include refid="sysFollowupClientJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO sys_followup_client(
+			id,
+			contents,
+			userid,
+			time,
+			clientid,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			remarks,
+			del_flag
+		) VALUES (
+			#{id},
+			#{contents},
+			#{userid},
+			#{time},
+			#{clientid},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{remarks},
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE sys_followup_client SET 	
+			contents = #{contents},
+			userid = #{userid},
+			time = #{time},
+			clientid = #{clientid},
+			update_by = #{updateBy.id},
+			update_date = #{updateDate},
+			remarks = #{remarks}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE sys_followup_client SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

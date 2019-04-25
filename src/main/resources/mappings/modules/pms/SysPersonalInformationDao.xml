@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thinkgem.jeesite.modules.pms.dao.SysPersonalInformationDao">
+    
+	<sql id="sysPersonalInformationColumns">
+		a.id AS "id",
+		a.person_id AS "personId",
+		a.id_card AS "idCard",
+		a.nation AS "nation",
+		a.email AS "email",
+		a.address AS "address",
+		a.bank_account AS "bankAccount",
+		a.signature AS "signature",
+		a.resume AS "resume",
+		a.sex AS "sex",
+		a.native_place AS "nativePlace",
+		a.birthday AS "birthday",
+		a.political_status AS "politicalStatus",
+		a.educational_background AS "educationalBackground",
+		a.graduate_institutions AS "graduateInstitutions",
+		a.major AS "major",
+		a.tip AS "tip",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.remarks AS "remarks",
+		a.del_flag AS "delFlag"
+	</sql>
+	
+	<sql id="sysPersonalInformationJoins">
+	</sql>
+    
+	<select id="get" resultType="SysPersonalInformation">
+		SELECT 
+			<include refid="sysPersonalInformationColumns"/>
+		FROM sys_personal_information a
+		<include refid="sysPersonalInformationJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="SysPersonalInformation">
+		SELECT 
+			<include refid="sysPersonalInformationColumns"/>
+		FROM sys_personal_information a
+		<include refid="sysPersonalInformationJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="personId != null and personId != ''">
+				AND a.person_id LIKE 
+					<if test="dbName == 'oracle'">'%'||#{personId}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{personId}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{personId},'%')</if>
+			</if>
+			<if test="idCard != null and idCard != ''">
+				AND a.id_card LIKE 
+					<if test="dbName == 'oracle'">'%'||#{idCard}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{idCard}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{idCard},'%')</if>
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="SysPersonalInformation">
+		SELECT 
+			<include refid="sysPersonalInformationColumns"/>
+		FROM sys_personal_information a
+		<include refid="sysPersonalInformationJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO sys_personal_information(
+			id,
+			person_id,
+			id_card,
+			nation,
+			email,
+			address,
+			bank_account,
+			signature,
+			resume,
+			sex,
+			native_place,
+			birthday,
+			political_status,
+			educational_background,
+			graduate_institutions,
+			major,
+			tip,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			remarks,
+			del_flag
+		) VALUES (
+			#{id},
+			#{personId},
+			#{idCard},
+			#{nation},
+			#{email},
+			#{address},
+			#{bankAccount},
+			#{signature},
+			#{resume},
+			#{sex},
+			#{nativePlace},
+			#{birthday},
+			#{politicalStatus},
+			#{educationalBackground},
+			#{graduateInstitutions},
+			#{major},
+			#{tip},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{remarks},
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE sys_personal_information SET 	
+			person_id = #{personId},
+			id_card = #{idCard},
+			nation = #{nation},
+			email = #{email},
+			address = #{address},
+			bank_account = #{bankAccount},
+			signature = #{signature},
+			resume = #{resume},
+			sex = #{sex},
+			native_place = #{nativePlace},
+			birthday = #{birthday},
+			political_status = #{politicalStatus},
+			educational_background = #{educationalBackground},
+			graduate_institutions = #{graduateInstitutions},
+			major = #{major},
+			tip = #{tip},
+			update_by = #{updateBy.id},
+			update_date = #{updateDate},
+			remarks = #{remarks}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE sys_personal_information SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thinkgem.jeesite.modules.hsk.dao.SysHousekeyDao">
+    
+	<sql id="sysHousekeyColumns">
+		a.id AS "id",
+		a.house_id AS "houseId",
+		a.name AS "name",
+		a.type AS "type",
+		a.organizationid AS "organizationid",
+		a.userid AS "userid",
+		a.status AS "status",
+		a.remark AS "remark",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.remarks AS "remarks",
+		a.del_flag AS "delFlag"
+	</sql>
+	
+	<sql id="sysHousekeyJoins">
+	</sql>
+    
+	<select id="get" resultType="SysHousekey">
+		SELECT 
+			<include refid="sysHousekeyColumns"/>
+		FROM sys_housekey a
+		<include refid="sysHousekeyJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="SysHousekey">
+		SELECT 
+			<include refid="sysHousekeyColumns"/>
+		FROM sys_housekey a
+		<include refid="sysHousekeyJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="id != null and id != ''">
+				AND a.id LIKE 
+					<if test="dbName == 'oracle'">'%'||#{id}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{id}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{id},'%')</if>
+			</if>
+			<if test="houseId != null and houseId != ''">
+				AND a.house_id LIKE 
+					<if test="dbName == 'oracle'">'%'||#{houseId}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{houseId}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{houseId},'%')</if>
+			</if>
+			<if test="name != null and name != ''">
+				AND a.name LIKE 
+					<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
+			</if>
+			<if test="userid != null and userid != ''">
+				AND a.userid = #{userid}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="SysHousekey">
+		SELECT 
+			<include refid="sysHousekeyColumns"/>
+		FROM sys_housekey a
+		<include refid="sysHousekeyJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO sys_housekey(
+			id,
+			house_id,
+			name,
+			type,
+			organizationid,
+			userid,
+			status,
+			remark,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			remarks,
+			del_flag
+		) VALUES (
+			#{id},
+			#{houseId},
+			#{name},
+			#{type},
+			#{organizationid},
+			#{userid},
+			#{status},
+			#{remark},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{remarks},
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE sys_housekey SET 	
+			house_id = #{houseId},
+			name = #{name},
+			type = #{type},
+			organizationid = #{organizationid},
+			userid = #{userid},
+			status = #{status},
+			remark = #{remark},
+			update_by = #{updateBy.id},
+			update_date = #{updateDate},
+			remarks = #{remarks}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE sys_housekey SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>
